@@ -4,6 +4,8 @@
 #include <QPainter>
 #include <QRandomGenerator>
 #include<QGraphicsView>
+#include <QPushButton>
+#include <QGraphicsProxyWidget>
 GameScene::GameScene(QObject *parent)
     : QGraphicsScene(parent),newScreenTriggered(false), score(0) {
     // Set scene size to match the background size
@@ -102,6 +104,22 @@ void GameScene::triggerEndScreen() {
     textItem->setPos(sceneRect().width() / 2 - textItem->boundingRect().width() / 2,
                      sceneRect().height() / 2 - textItem->boundingRect().height() / 2);  // Center the text
     addItem(textItem);
+
+    // Create a button to go to level 2
+    QPushButton *level2Button = new QPushButton("Go to Level 2");
+    level2Button->setFont(QFont("Arial", 16));
+    level2Button->setFixedSize(150, 50);
+
+    // Connect the button's click signal to a slot for transitioning to level 2
+    connect(level2Button, &QPushButton::clicked, this, &GameScene::goToLevel2);
+
+    // Embed the button in the scene
+    QGraphicsProxyWidget *proxyWidget = new QGraphicsProxyWidget();
+    proxyWidget->setWidget(level2Button);
+    proxyWidget->setZValue(2);
+    proxyWidget->setPos(sceneRect().width() / 2 - level2Button->width() / 2,
+                        sceneRect().height() / 2 - level2Button->height() / 2 + 50);
+    addItem(proxyWidget);
 }
 
 void GameScene::updateScene() {
@@ -121,7 +139,7 @@ void GameScene::updateScene() {
     // Check for collisions with coins
     for (Coin *coin : coins) {
         if (player->collidesWithItem(coin)) {
-            updateScore(5); // Increase score
+            updateScore(10); // Increase score
             removeItem(coin);
             coins.removeOne(coin);
             delete coin;
@@ -165,9 +183,30 @@ void GameScene::showGameOverMessage(const QString &message) {
                      sceneRect().height() / 2 - textItem->boundingRect().height() / 2);  // Center the text
     addItem(textItem);
 
-    // Stop the game updates by stopping the timer or game loop
+    // Create a button to go to level 2
+    QPushButton *level2Button = new QPushButton("Go to Level 2");
+    level2Button->setFont(QFont("Arial", 16));
+    level2Button->setFixedSize(150, 50);
+
+    // Connect the button's click signal to a slot for transitioning to level 2
+    connect(level2Button, &QPushButton::clicked, this, &GameScene::goToLevel2);
+
+    // Embed the button in the scene
+    QGraphicsProxyWidget *proxyWidget = new QGraphicsProxyWidget();
+    proxyWidget->setWidget(level2Button);
+    proxyWidget->setZValue(2);
+    proxyWidget->setPos(sceneRect().width() / 2 - level2Button->width() / 2,
+                        sceneRect().height() / 2 - level2Button->height() / 2 + 50);
+    addItem(proxyWidget);
 
 
+
+}
+void GameScene::goToLevel2() {
+    qDebug() << "Transitioning to Level 2...";
+    // Logic to transition to level 2
+    // This could involve switching to a new scene or reloading the current scene with new content
+    emit level2Requested();  // Emit a signal to notify the main application
 }
 void GameScene::clearEnemiesAndCoins() {
     // Remove existing enemies and coins from the scene
@@ -186,7 +225,7 @@ void GameScene::clearEnemiesAndCoins() {
 
 void GameScene::generateEnemies() {
 
-        for (int i = 0; i < 5; ++i) {  // Adjust the number of enemies as needed
+        for (int i = 0; i < 3; ++i) {  // Adjust the number of enemies as needed
             bool validPosition = false;
             int randomX;
             // Try finding a valid position for the enemy
@@ -212,7 +251,7 @@ void GameScene::generateEnemies() {
 
 void GameScene::generateCoins() {
     // Add coins randomly on the y-axis and ensure they are separated from mushrooms
-        for (int i = 0; i < 10; ++i) {
+        for (int i = 0; i < 6; ++i) {
             bool validPosition = false;
             int randomX, randomY;
 
@@ -252,7 +291,7 @@ void GameScene::handleEnemyCollisions() {
     for (Enemy *enemy : enemies) {
         if (player->collidesWithItem(enemy) && player->getVelocityY() > 0) {
             // Mario defeats the enemy by jumping on top
-            updateScore(1);
+            updateScore(10);
             removeItem(enemy);
             enemies.removeOne(enemy);
             delete enemy;
@@ -261,7 +300,7 @@ void GameScene::handleEnemyCollisions() {
 
         if (player->collidesWithItem(enemy) && player->y() == 380) {
             // Mario collides with the enemy (not jumping)
-            updateScore(2);  // Decrease score by 10
+            // updateScore(-10);  // Decrease score by 10
             qDebug() << "Player hit by enemy! Score decreased by 10.";
         }
     }
@@ -269,16 +308,7 @@ void GameScene::handleEnemyCollisions() {
 
 void GameScene::updateScore(int change) {
 
-    if(change==1){
-        score=score+10;
-    }
-    if(change==2){
-        score=score-100;
-    }
-    if(score<0){
-        score=0;
-    }
-
+    score += change;
 
     // Update the score display
     scoreText->setPlainText(QString("Score: %1").arg(score));

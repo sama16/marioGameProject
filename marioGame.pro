@@ -15,7 +15,9 @@ SOURCES += \
     GameWindow.cpp \
     Player.cpp \
     WelcomeWindow.cpp \
-    main.cpp
+    level2.cpp \
+    main.cpp \
+    weapon.cpp
 
 HEADERS += \
     Coin.h \
@@ -23,7 +25,9 @@ HEADERS += \
     GameScene.h \
     GameWindow.h \
     Player.h \
-    WelcomeWindow.h
+    WelcomeWindow.h \
+    level2.h \
+    weapon.h
 
 FORMS += \
     GameWindow.ui

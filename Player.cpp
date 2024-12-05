@@ -2,6 +2,7 @@
 #include <QGraphicsScene>
 #include <QKeyEvent>
 
+
 Player::Player() {
     // Load the image for Mario
     QPixmap marioPixmap(":/images/mario.png");  // Path to your image file
@@ -15,6 +16,7 @@ Player::Player() {
 }
 
 void Player::handleInput(QKeyEvent *event, bool pressed) {
+
     // Handle left and right movement based on key press
     if (event->key() == Qt::Key_Left) {
         velocityX = pressed ? -5 : 0;  // Move left (negative velocity) when pressed
