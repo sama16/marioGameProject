@@ -7,6 +7,7 @@
 #include "Player.h"
 #include "Coin.h"
 #include "Enemy.h"
+#include "fallingRock.h"
 
 class GameScene : public QGraphicsScene {
     Q_OBJECT
@@ -26,7 +27,7 @@ public:
 
    void clearEnemiesAndCoins();
     void generateEnemies();
-
+    void generateRocks();
     void generateCoins();
 
     void moveItemsWithPlayer();
@@ -46,6 +47,7 @@ private:
     Player *player;
     QList<Coin *> coins;
     QList<Enemy *> enemies;
+    QList<fallingRock*> rocks;
     QGraphicsPixmapItem *background;
 
 

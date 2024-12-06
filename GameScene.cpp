@@ -24,6 +24,7 @@ GameScene::GameScene(QObject *parent)
     scoreText->setPos(30, 30); // Top-left corner
     addItem(scoreText);
     generateEnemies();
+    generateRocks();
     generateCoins();
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &GameScene::updateScene);
@@ -61,6 +62,7 @@ void GameScene::triggerNewScreen() {
     clearEnemiesAndCoins();
     generateEnemies();
     generateCoins();
+    generateRocks();
         // Now that we're on the new screen, check if the player is at the end of the screen
     // if (newScreenTriggered && ) {
     //     // Trigger end screen after Mario reaches the right edge
@@ -118,10 +120,14 @@ void GameScene::updateScene() {
         enemy->update();  // Update the movement of the enemies
     }
 
+    for (fallingRock *rockfall : rocks) {
+        rockfall->update();  // Update the movement of the enemies
+    }
+
     // Check for collisions with coins
     for (Coin *coin : coins) {
         if (player->collidesWithItem(coin)) {
-            updateScore(5); // Increase score
+            updateScore(1); // Increase score
             removeItem(coin);
             coins.removeOne(coin);
             delete coin;
@@ -182,6 +188,12 @@ void GameScene::clearEnemiesAndCoins() {
         delete coin;
     }
     coins.clear();
+
+    for (fallingRock *rock : rocks) {
+        removeItem(rock);
+        delete rock;
+    }
+    rocks.clear();
 }
 
 void GameScene::generateEnemies() {
@@ -208,6 +220,33 @@ void GameScene::generateEnemies() {
             enemies.append(enemy);
             addItem(enemy);
         }
+}
+
+void GameScene::generateRocks() {
+
+    for (int i = 0; i < 5; ++i) {  // Adjust the number of enemies as needed
+        bool validPosition = false;
+        int randomY;
+        // Try finding a valid position for the enemy
+        while (!validPosition) {
+            randomY = QRandomGenerator::global()->bounded(100, 800);  // Random x-coordinate (100 to 800)
+            randomY = QRandomGenerator::global()->bounded(100, 800);
+            randomY = QRandomGenerator::global()->bounded(100, 800);
+            // Check if the new enemy overlaps with any existing enemy
+            validPosition = true;
+            for (fallingRock *existingrock : rocks) {
+                if (qAbs(existingrock->y() - randomY) < 100) {  // Ensure minimum distance (100 pixels in this case)
+                    validPosition = false;
+                    break;  // Skip to the next iteration if overlap is detected
+                }
+            }
+        }
+
+        // Create the enemy at the valid random position
+        fallingRock *fallingrock = new fallingRock(420, randomY);  // y-position fixed at 530 (ground level)
+        rocks.append(fallingrock);
+        addItem(fallingrock);
+    }
 }
 
 void GameScene::generateCoins() {
@@ -263,6 +302,23 @@ void GameScene::handleEnemyCollisions() {
             // Mario collides with the enemy (not jumping)
             updateScore(2);  // Decrease score by 10
             qDebug() << "Player hit by enemy! Score decreased by 10.";
+        }
+    }
+
+    for (fallingRock *rockfall : rocks) {
+        if (player->collidesWithItem(rockfall) && player->getVelocityY() > 0) {
+            // Mario defeats the rockfall by jumping on top
+            updateScore(1);
+            removeItem(rockfall);
+            rocks.removeOne(rockfall);
+            delete rockfall;
+            break;  // Exit loop since this rockfall is handled
+        }
+
+       if (player->collidesWithItem(rockfall) && player->y() == 380) {
+            // Mario collides with the enemy (not jumping)
+            updateScore(2);  // Decrease score by 10
+            qDebug() << "Player hit by rock! Score decreased by 10.";
         }
     }
 }

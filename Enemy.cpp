@@ -3,7 +3,7 @@
 
 // Constructor for Enemy class
 Enemy::Enemy(int x, int y) {
-    setPixmap(QPixmap("C:/Users/hp/Documents/marioGame/enemy.png").scaled(30, 30)); // Load coin sprite
+    setPixmap(QPixmap("C:/Users/Rana/Documents/GitHub/marioGameProject/enemy.png").scaled(30, 30)); // Load coin sprite
     setPos(x, y);
 
     // Initialize horizontal velocity

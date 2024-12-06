@@ -15,6 +15,7 @@ SOURCES += \
     GameWindow.cpp \
     Player.cpp \
     WelcomeWindow.cpp \
+    fallingRock.cpp \
     main.cpp
 
 HEADERS += \
@@ -23,7 +24,8 @@ HEADERS += \
     GameScene.h \
     GameWindow.h \
     Player.h \
-    WelcomeWindow.h
+    WelcomeWindow.h \
+    fallingRock.h
 
 FORMS += \
     GameWindow.ui
