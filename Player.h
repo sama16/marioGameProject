@@ -3,38 +3,44 @@
 
 #include <QGraphicsPixmapItem>
 #include <QKeyEvent>
+#include "Weapon.h"  // Include Weapon header
 
 class Player : public QGraphicsPixmapItem {
 public:
-    Player();  // Constructor
-    void handleInput(QKeyEvent *event, bool pressed);  // Handle user input (key presses)
-    void update();  // Update player position and state
+    Player();  // Constructor for Player
 
-    // Getter for vertical velocity
-    float getVelocityY() const { return velocityY; }
+    void handleInput(QKeyEvent* event, bool pressed);  // Handle left, right, and jump inputs
+    void reset();  // Reset player state
+    void stopMoving();  // Stop player movement
+    void update();  // Update player position and physics
 
-    // Getter for horizontal velocity
-    float getVelocityX() const { return velocityX; }
+    void setCurrentWeapon(Weapon* weapon);  // Set the player's current weapon
+    void useWeapon();  // Use the weapon
+    bool spendCoins(int cost);  // Spend coins to buy weapons
+    void checkForRewards();  // Check if the player earns coins or unlocks a weapon
 
-    // Setters and getters for position (if needed)
-    void setPosition(float x, float y) { setPos(x, y); }
-    void reset();
-    void stopMoving();
-
+    int getCoins() const;  // Get the player's coins
+    int getScore() const;  // Get the player's score
+    int getVelocityX() const;
+    int getVelocityY() const;
+      void fireBullet();
 
 private:
-    float velocityX;  // Horizontal velocity
-    float velocityY;  // Vertical velocity (affects jumping and falling)
-    bool isJumping;   // Flag to check if the player is in the air
-    const float gravity = 0.5f;  // Gravity force to pull Mario down
-    const float jumpStrength = -15.0f;  // How strong Mario's jump is
-    const float maxFallSpeed = 10.0f;  // Max speed Mario can fall at
-    const float groundY = 500.0f;  // Ground level (where Mario stands)
+    void jump();  // Perform jump action
+    void applyGravity();  // Apply gravity to the player
+    void land();  // Land on the ground
 
+    int velocityX;  // Horizontal velocity
+    int velocityY;  // Vertical velocity (used for jumping/falling)
+    bool isJumping;  // Flag to check if the player is jumping
 
-    void jump();  // Handle jumping action
-    void applyGravity();  // Apply gravity to simulate falling
-    void land();  // Handle landing after a jump
+    const int jumpStrength = -15;  // Strength of the jump
+    const int gravity = 1;  // Gravity strength pulling the player down
+    const int maxFallSpeed = 10;  // Maximum fall speed to prevent falling too fast
+
+    int coins;  // Number of coins the player has
+    int score;  // Player's current score
+    Weapon* currentWeapon;  // The weapon currently equipped by the player
 };
 
 #endif // PLAYER_H

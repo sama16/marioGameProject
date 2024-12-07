@@ -16,7 +16,7 @@ GameScene::GameScene(QObject *parent)
     // Add the player
     player = new Player();
     addItem(player);
-    player->setPosition(100,  380);  // S
+    player->setPos(100,  380);  // S
     // Add score display
     scoreText = new QGraphicsTextItem("Score: 0");
     scoreText->setDefaultTextColor(Qt::black);
@@ -55,7 +55,7 @@ void GameScene::triggerNewScreen() {
     // Reset Mario's position to the left
     player->reset();
     player->update();
-    player->setPosition(0, 380);
+    player->setPos(0, 380);
 
 
     // Optionally regenerate coins and enemies for the new screen
@@ -85,7 +85,7 @@ void GameScene::triggerEndScreen() {
     background->setPixmap(scaledBgPixmap);
     background->setPos(0, 0);  // Position the background at the top-left corner
 // Reset Mario's position to the calculated ground level
-    player->setPosition(450, 290);
+    player->setPos(450, 290);
       player->stopMoving();
     clearEnemiesAndCoins() ;
 
@@ -308,7 +308,7 @@ void GameScene::handleEnemyCollisions() {
     for (fallingRock *rockfall : rocks) {
         if (player->collidesWithItem(rockfall) && player->getVelocityY() > 0) {
             // Mario defeats the rockfall by jumping on top
-            updateScore(1);
+            updateScore(2);
             removeItem(rockfall);
             rocks.removeOne(rockfall);
             delete rockfall;
@@ -334,6 +334,60 @@ void GameScene::updateScore(int change) {
     if(score<0){
         score=0;
     }
+    if (score == 20) {
+        // Load the star image
+        QPixmap starPixmap("C:/Users/Rana/Documents/GitHub/marioGameProject/starnew.png");
+
+        // Create a new QGraphicsPixmapItem for the star image
+        QGraphicsPixmapItem* starItem = new QGraphicsPixmapItem(starPixmap);
+
+        // Position the star image
+        starItem->setPos(220, 50);  // Adjust as needed
+
+        // Add the star item to the scene
+        addItem(starItem);
+
+        // Create a new QGraphicsTextItem for the congrats message
+        QGraphicsTextItem* messageItem = new QGraphicsTextItem("Congrats! New weapon unlocked.");
+
+        // Set font for the message (you can adjust size, style, etc.)
+        QFont font("Arial", 11, QFont::Bold);
+        messageItem->setFont(font);
+
+        // Set the text color to ensure it's visible (white, for example)
+        messageItem->setDefaultTextColor(Qt::black);
+
+        // Position the message below the star
+        messageItem->setPos(350, 370);  // Adjust position
+
+        // Add the message item to the scene
+        addItem(messageItem);
+
+        // Debugging output to confirm visibility
+        qDebug() << "Star and message should now be visible at position ("
+                 << starItem->x() << ", " << starItem->y() << ")";
+
+        // Create a timer to remove both the star and the message after 3 seconds (3000 ms)
+        QTimer::singleShot(3000, [this, messageItem, starItem]() {
+            // Remove the star item and the message item from the scene
+            this->removeItem(starItem);
+            this->removeItem(messageItem);
+
+            // Clean up memory by deleting the items
+            delete starItem;
+            delete messageItem;
+
+            // Debugging output to confirm cleanup
+            qDebug() << "Star and message removed from the scene.";
+
+            player->checkForRewards();
+
+            // Debugging: Print the current score
+            qDebug() << "Current score: " << score;
+        });
+
+    }
+
 
 
     // Update the score display

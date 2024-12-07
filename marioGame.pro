@@ -15,8 +15,11 @@ SOURCES += \
     GameWindow.cpp \
     Player.cpp \
     WelcomeWindow.cpp \
+    bullet.cpp \
     fallingRock.cpp \
-    main.cpp
+    main.cpp \
+    store.cpp \
+    weapon.cpp
 
 HEADERS += \
     Coin.h \
@@ -25,7 +28,10 @@ HEADERS += \
     GameWindow.h \
     Player.h \
     WelcomeWindow.h \
-    fallingRock.h
+    bullet.h \
+    fallingRock.h \
+    store.h \
+    weapon.h
 
 FORMS += \
     GameWindow.ui
